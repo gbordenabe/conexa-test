@@ -9,11 +9,13 @@ import { Model } from 'mongoose';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  /* create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const createdUser = new this.userModel(createUserDto);
+    const user = await createdUser.save();
+    return { id: user._id, email: user.email, role: user.role };
   }
 
-  findAll() {
+  /*findAll() {
     return `This action returns all user`;
   } */
 
