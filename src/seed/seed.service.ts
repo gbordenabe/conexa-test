@@ -23,6 +23,11 @@ export class SeedService {
       password: 'admin',
       role: 'admin',
     });
+    await this.authService.register({
+      email: 'regular@email.com',
+      password: 'regular',
+      role: 'regular',
+    });
     const movies = await this.httpFetchService.get(
       'https://swapi.dev/api/films',
     );
