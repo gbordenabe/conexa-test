@@ -1,7 +1,7 @@
 import { Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiController } from 'src/decorators';
-import { RegisterDto } from 'src/dtos';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiController('auth')
 export class AuthController {
