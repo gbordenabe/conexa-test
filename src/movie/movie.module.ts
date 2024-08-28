@@ -10,5 +10,6 @@ import { MovieSchema } from 'src/schemas';
   ],
   controllers: [MovieController],
   providers: [MovieService],
+  exports: [MovieService],
 })
 export class MovieModule {}

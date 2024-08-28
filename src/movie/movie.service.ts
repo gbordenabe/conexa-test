@@ -1,11 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Movie } from 'src/schemas';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class MovieService {
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+  constructor(@InjectModel(Movie.name) private movieModel: Model<Movie>) {}
+
+  async create(createMovieDto: CreateMovieDto) {
+    const createdMovie = new this.movieModel(createMovieDto);
+    return await createdMovie.save();
+  }
+
+  async createBulk(createMovieDto: CreateMovieDto[]) {
+    return await this.movieModel.insertMany(createMovieDto);
   }
 
   findAll() {
@@ -22,5 +32,9 @@ export class MovieService {
 
   remove(id: number) {
     return `This action removes a #${id} movie`;
+  }
+
+  async removeAll() {
+    return await this.movieModel.deleteMany({}).exec();
   }
 }

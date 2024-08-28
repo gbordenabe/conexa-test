@@ -23,11 +23,7 @@ export class UserService {
     return await this.userModel.findOne({ email }).exec();
   }
 
-  /* update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async removeAll() {
+    return await this.userModel.deleteMany({}).exec();
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  } */
 }

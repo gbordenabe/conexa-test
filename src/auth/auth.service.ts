@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const { email, password } = registerDto;
+    const { email, password, role = 'guest' } = registerDto;
 
     const existingUser = await this.userService.findOneByEmail(email);
     if (existingUser) {
@@ -22,7 +22,11 @@ export class AuthService {
     }
 
     const hashedPassword = await this.hashingAdapterService.hash(password);
-    return await this.userService.create({ email, password: hashedPassword });
+    return await this.userService.create({
+      email,
+      password: hashedPassword,
+      role,
+    });
   }
 
   async login(loginDto: LoginDto) {
