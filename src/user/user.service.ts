@@ -19,7 +19,7 @@ export class UserService {
     return `This action returns all user`;
   } */
 
-  async findOne(email: string): Promise<User | null> {
+  async findOneByEmail(email: string): Promise<User | null> {
     return await this.userModel.findOne({ email }).exec();
   }
 

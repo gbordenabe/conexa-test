@@ -6,6 +6,7 @@ interface EnvVars {
   ENV: 'DEV' | 'PROD';
   DEV_DB_CONNECTION_STRING: string;
   PROD_DB_CONNECTION_STRING: string;
+  JWT_SECRET: string;
 }
 
 const envsSchema = joi
@@ -14,6 +15,7 @@ const envsSchema = joi
     ENV: joi.string().valid('DEV', 'PROD').required(),
     DEV_DB_CONNECTION_STRING: joi.string().required(),
     PROD_DB_CONNECTION_STRING: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -31,4 +33,5 @@ export const envs = {
     envVars.ENV === 'DEV'
       ? envVars.DEV_DB_CONNECTION_STRING
       : envVars.PROD_DB_CONNECTION_STRING,
+  jwtSecret: envVars.JWT_SECRET,
 };
