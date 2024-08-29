@@ -6,7 +6,7 @@ export class CreateMovieDto {
 
   @IsNumber()
   @IsPositive()
-  episode_id: string;
+  episode_id: number;
 
   @IsString()
   @IsOptional()

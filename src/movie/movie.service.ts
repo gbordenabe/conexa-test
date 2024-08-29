@@ -6,14 +6,14 @@ import {
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Movie } from 'src/schemas';
+import { Movie } from '../schemas';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class MovieService {
   constructor(@InjectModel(Movie.name) private movieModel: Model<Movie>) {}
 
-  async create(createMovieDto: CreateMovieDto) {
+  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
     try {
       const createdMovie = new this.movieModel(createMovieDto);
       return await createdMovie.save();
