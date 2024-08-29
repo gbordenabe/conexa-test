@@ -5,8 +5,10 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { ApiController } from 'src/decorators';
 import { Auth } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiController('movie')
+@ApiBearerAuth()
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
