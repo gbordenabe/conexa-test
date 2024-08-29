@@ -3,14 +3,15 @@ import { UserService } from 'src/user/user.service';
 import { HashingAdapterService } from '../shared/hashing-adapter.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthService } from '../shared/jwt-auth.service';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly hashingAdapterService: HashingAdapterService,
-    private readonly JwtAuthService: JwtAuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -22,11 +23,13 @@ export class AuthService {
     }
 
     const hashedPassword = await this.hashingAdapterService.hash(password);
-    return await this.userService.create({
+    const user = await this.userService.create({
       email,
       password: hashedPassword,
       role,
     });
+
+    return this.getJwtToken({ id: user.id as string });
   }
 
   async login(loginDto: LoginDto) {
@@ -45,9 +48,11 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const payload = { id: user.id, role: user.role };
-    const token = await this.JwtAuthService.generateToken(payload);
+    return this.getJwtToken({ id: user.id as string });
+  }
 
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
     return { token };
   }
 }

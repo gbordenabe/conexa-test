@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class HttpFetchService {
+export class HttpAdapterService {
   constructor(private readonly httpService: HttpService) {}
 
   async get(url: string) {

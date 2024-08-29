@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { MovieService } from 'src/movie/movie.service';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from '../auth/auth.service';
-import { firstValueFrom } from 'rxjs';
-import { HttpFetchService } from 'src/shared/http-fetch.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ValidRoles } from 'src/auth/interfaces';
+import { HttpAdapterService } from 'src/shared/http-adapter.service';
 
 @Injectable()
 export class SeedService {
@@ -12,7 +12,7 @@ export class SeedService {
     private readonly userService: UserService,
     private readonly movieService: MovieService,
     private readonly authService: AuthService,
-    private readonly httpFetchService: HttpFetchService,
+    private readonly httpAdapterService: HttpAdapterService,
   ) {}
 
   async runSeed() {
@@ -20,15 +20,15 @@ export class SeedService {
     await this.movieService.removeAll();
     await this.authService.register({
       email: 'admin@email.com',
-      password: 'admin',
-      role: 'admin',
+      password: '123456',
+      role: ValidRoles.admin,
     });
     await this.authService.register({
       email: 'regular@email.com',
-      password: 'regular',
-      role: 'regular',
+      password: '123456',
+      role: ValidRoles.regular,
     });
-    const movies = await this.httpFetchService.get(
+    const movies = await this.httpAdapterService.get(
       'https://swapi.dev/api/films',
     );
     await this.movieService.createBulk(movies.results);
