@@ -15,6 +15,18 @@ export class MovieService {
 
   async create(createMovieDto: CreateMovieDto): Promise<Movie> {
     try {
+      const existsEpisodeId = await this.checkIfMovieExistsByEpisodeId(
+        createMovieDto.episode_id,
+      );
+      if (existsEpisodeId) {
+        throw new BadRequestException('Movie episode_id already exists');
+      }
+      const existsTitle = await this.checkIfMovieExistsByTitle(
+        createMovieDto.title,
+      );
+      if (existsTitle) {
+        throw new BadRequestException('Movie title already exists');
+      }
       const createdMovie = new this.movieModel(createMovieDto);
       return await createdMovie.save();
     } catch (error) {
@@ -49,7 +61,7 @@ export class MovieService {
 
   async findOne(episode_id: number) {
     try {
-      const movie = await this.checkIfMovieExists(episode_id);
+      const movie = await this.checkIfMovieExistsByEpisodeId(episode_id);
       return movie;
     } catch (error) {
       if (error.status === 400) {
@@ -61,7 +73,7 @@ export class MovieService {
 
   async update(episode_id: number, updateMovieDto: UpdateMovieDto) {
     try {
-      await this.checkIfMovieExists(episode_id);
+      await this.checkIfMovieExistsByEpisodeId(episode_id);
       await this.movieModel.updateOne({ episode_id }, updateMovieDto);
       const movieUpdated = await this.movieModel.findOne({
         episode_id,
@@ -77,7 +89,7 @@ export class MovieService {
 
   async remove(episode_id: number) {
     try {
-      const movie = await this.checkIfMovieExists(episode_id);
+      const movie = await this.checkIfMovieExistsByEpisodeId(episode_id);
       await this.movieModel.deleteOne({ episode_id }).exec();
       return { message: 'Movie deleted', movie };
     } catch (error) {
@@ -92,9 +104,19 @@ export class MovieService {
     return await this.movieModel.deleteMany({}).exec();
   }
 
-  async checkIfMovieExists(episode_id: number) {
+  async checkIfMovieExistsByEpisodeId(episode_id: number) {
     const movie = await this.movieModel.findOne({
       episode_id,
+    });
+    if (!movie) {
+      throw new BadRequestException();
+    }
+    return movie;
+  }
+
+  async checkIfMovieExistsByTitle(title: string) {
+    const movie = await this.movieModel.findOne({
+      title,
     });
     if (!movie) {
       throw new BadRequestException();
