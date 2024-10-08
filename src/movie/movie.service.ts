@@ -84,16 +84,16 @@ export class MovieService {
 
   async update(episode_id: number, updateMovieDto: UpdateMovieDto) {
     try {
-      await this.checkIfMovieExistsByEpisodeId(episode_id);
-      await this.movieModel.updateOne({ episode_id }, updateMovieDto);
-      const movieUpdated = await this.movieModel.findOne({
-        episode_id,
-      });
-      return movieUpdated;
-    } catch (error) {
-      if (error.status === 400) {
+      const movieUpdated = await this.movieModel.findOneAndUpdate(
+        { episode_id },
+        updateMovieDto,
+        { new: true },
+      );
+      if (!movieUpdated) {
         throw new BadRequestException('Movie not found');
       }
+      return movieUpdated;
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
