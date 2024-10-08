@@ -1,4 +1,4 @@
-import { Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -6,6 +6,7 @@ import { ApiController } from 'src/decorators';
 import { Auth } from 'src/auth/decorators';
 import { ValidRoles } from 'src/auth/interfaces';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { PaginationDto } from './dto/pagination.dto';
 
 @ApiController('movie')
 @ApiBearerAuth()
@@ -20,8 +21,8 @@ export class MovieController {
 
   @Get()
   @Auth()
-  findAll() {
-    return this.movieService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.movieService.findAll(paginationDto);
   }
 
   @Get(':id')

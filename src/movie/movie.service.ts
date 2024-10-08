@@ -8,6 +8,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Movie } from '../schemas';
 import { Model } from 'mongoose';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Injectable()
 export class MovieService {
@@ -48,12 +49,22 @@ export class MovieService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
     try {
-      const movies = await this.movieModel.find().exec();
-      return movies.map((movie) => {
-        return { title: movie.title, episode_id: movie.episode_id };
-      });
+      const { limit = 10, offset = 0 } = paginationDto;
+      const [movies, total] = await Promise.all([
+        this.movieModel.find().skip(offset).limit(limit).exec(),
+        this.movieModel.countDocuments().exec(),
+      ]);
+
+      return {
+        total,
+        page: Math.floor(offset / limit) + 1,
+        data: movies.map((movie) => ({
+          title: movie.title,
+          episode_id: movie.episode_id,
+        })),
+      };
     } catch (error) {
       throw new InternalServerErrorException();
     }
