@@ -100,13 +100,13 @@ export class MovieService {
 
   async remove(episode_id: number) {
     try {
-      const movie = await this.checkIfMovieExistsByEpisodeId(episode_id);
-      await this.movieModel.deleteOne({ episode_id }).exec();
-      return { message: 'Movie deleted', movie };
-    } catch (error) {
-      if (error.status === 400) {
+      const result = await this.movieModel.deleteOne({ episode_id }).exec();
+      if (result.deletedCount > 0) {
+        return { message: 'Movie deleted', episode_id };
+      } else {
         throw new BadRequestException('Movie not found');
       }
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
